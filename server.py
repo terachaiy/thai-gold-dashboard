@@ -72,6 +72,35 @@ def x4():
     return analysis.x4_summary(a) if a else JSONResponse({"error": "no data"}, status_code=503)
 
 
+def _port_in_use() -> bool:
+    import socket
+    with socket.socket() as s:
+        return s.connect_ex(("127.0.0.1", PORT)) == 0
+
+
+def _monthly_backtest():
+    """Re-run the walk-forward backtest when its results are over 30 days old."""
+    p = data.CACHE / "backtest.json"
+    if p.exists() and time.time() - p.stat().st_mtime < 30 * 86400:
+        return
+    import os
+    import subprocess
+    import sys
+    subprocess.run([sys.executable, str(Path(__file__).parent / "run_backtest.py")],
+                   cwd=Path(__file__).parent, stdout=sys.stdout, stderr=sys.stderr,
+                   env={**os.environ, "PYTHONIOENCODING": "utf-8"},
+                   creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
+
+
 if __name__ == "__main__":
+    import sys
+    if sys.stdout is None:  # started with pythonw (no console): log to a file instead
+        log = open(data.CACHE / "server.log", "a", encoding="utf-8", buffering=1)
+        sys.stdout = sys.stderr = log
+    if _port_in_use():
+        print("gold server already running on port", PORT)
+        sys.exit(0)
+    print(time.strftime("%Y-%m-%d %H:%M:%S"), "gold server starting on port", PORT)
     threading.Thread(target=_loop, daemon=True).start()
+    threading.Thread(target=_monthly_backtest, daemon=True).start()
     uvicorn.run(app, host="0.0.0.0", port=PORT, log_level="warning")

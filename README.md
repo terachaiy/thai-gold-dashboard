@@ -11,6 +11,9 @@ python -m venv .venv
 .venv\Scripts\python run_backtest.py      # ทดสอบย้อนหลัง ~1 นาที (รันใหม่เดือนละครั้งพอ)
 .venv\Scripts\python server.py            # เปิด http://localhost:8765
 ```
+**เปิดอัตโนมัติตอนเข้าใช้ Windows:** `gold\install-autostart.ps1` (ยกเลิก: `-Remove`) เซิร์ฟเวอร์จะรันแบบไม่มีหน้าต่าง
+บันทึก log ที่ `gold\data\server.log` และรัน backtest ใหม่เองเมื่อผลเก่ากว่า 30 วัน
+
 เซิร์ฟเวอร์อัปเดตราคาและข่าวทุก 15 นาที และเปิดรับจากทุกเครื่องในวง LAN เพื่อให้ X4 อ่าน `/api/x4` ได้
 (Windows อาจถามให้อนุญาต Python ผ่าน firewall ให้กดอนุญาตสำหรับ Private network)
 
