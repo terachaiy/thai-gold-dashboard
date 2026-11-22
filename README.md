@@ -3,7 +3,17 @@
 วิเคราะห์ราคาทองคำแท่ง 96.5% (สมาคมค้าทองคำ) ด้วยการวิเคราะห์ทางเทคนิค ข่าว และการทดสอบย้อนหลังแบบ walk-forward
 มีหน้าเว็บภาษาไทย และหน้าสรุปบน Xteink X4 (แอป **Gold**)
 
-## เริ่มใช้งาน
+## ออนไลน์ (ไม่ต้องเปิดโน้ตบุ๊ก)
+หน้าเว็บ: https://terachaiy.github.io/thai-gold-dashboard/
+GitHub Actions ([.github/workflows/gold.yml](.github/workflows/gold.yml)) รัน `export_static.py` ทุก 30 นาที
+ช่วง 08:00–19:00 น. และ 06:15 น. (เวลาไทย) แล้วเผยแพร่ขึ้น GitHub Pages ถ้ารอบไหนล้มเหลว หน้าเว็บจะแสดงข้อมูลชุดล่าสุดที่สำเร็จ
+ประวัติข่าวและราคาเก็บใน Actions cache · GitHub จะหยุด schedule ถ้า repo ไม่มีความเคลื่อนไหว 60 วัน
+(จะได้อีเมลเตือน กด Enable ในหน้า Actions ได้)
+
+ส่งโค้ดที่แก้ใน workspace ขึ้น GitHub (commit ก่อน): `gold\publish.ps1`
+สคริปต์จะเปลี่ยนอีเมลผู้เขียนเป็น no-reply ของ GitHub เพื่อไม่ให้อีเมลจริงเป็นสาธารณะ
+
+## รันบนโน้ตบุ๊ก (ทางเลือก)
 ```
 cd gold
 python -m venv .venv
@@ -18,8 +28,8 @@ python -m venv .venv
 (Windows อาจถามให้อนุญาต Python ผ่าน firewall ให้กดอนุญาตสำหรับ Private network)
 
 ## X4
-- แอป Gold อ่านที่อยู่เซิร์ฟเวอร์จาก `/apps/gold/server.txt` บน SD การ์ด (ค่าเริ่มต้น `http://172.20.10.3:8765`)
-  ถ้า IP ของโน้ตบุ๊กเปลี่ยน ให้แก้ไฟล์นี้ผ่าน File Transfer
+- แอป Gold อ่านที่อยู่จาก `/apps/gold/server.txt` บน SD การ์ด
+  (ค่าเริ่มต้น `https://terachaiy.github.io/thai-gold-dashboard`) ถ้าจะใช้โน้ตบุ๊กแทน ให้ใส่ `http://<IP>:8765`
 - ข้อมูลล่าสุดถูกเก็บไว้ที่ `/apps/gold/latest.json` จึงเปิดดูได้แม้ไม่มีเน็ต ปุ่ม Confirm = รีเฟรช
 
 ## โครงสร้าง
