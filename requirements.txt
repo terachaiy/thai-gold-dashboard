@@ -1,0 +1,9 @@
+pandas
+numpy
+requests
+yfinance
+feedparser
+fastapi
+uvicorn
+beautifulsoup4
+lxml

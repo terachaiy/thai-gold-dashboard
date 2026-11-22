@@ -180,7 +180,7 @@ function bar(v){ // v in [-1,1]
 }
 
 async function load(){
-  const a = await (await fetch("/api/summary")).json();
+  const a = await (await fetch("api/summary")).json();
   if(!a.price){ $("stamp").innerHTML = `<span class="err">โหลดข้อมูลไม่สำเร็จ: ${a.error||""}</span>`; return; }
   const q = a.quote || {};
   $("stamp").textContent = `อัปเดต ${new Date(a.generated).toLocaleString("th-TH")}`;
@@ -228,7 +228,7 @@ async function load(){
 }
 
 async function loadNews(){
-  const r = await (await fetch("/api/news")).json();
+  const r = await (await fetch("api/news")).json();
   $("news").innerHTML = r.items.map(it => {
     const k = it.score>0.1?"p":it.score<-0.1?"n":"z";
     const t = new Date(it.time).toLocaleString("th-TH",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
@@ -244,7 +244,7 @@ async function loadNews(){
 }
 
 async function loadBacktest(){
-  const b = await (await fetch("/api/backtest")).json();
+  const b = await (await fetch("api/backtest")).json();
   if(!b.results) return;
   const R = b.results, keys = Object.keys(R);
   $("bt").innerHTML = `<tr><th>กลยุทธ์</th><th>ผลตอบแทน/ปี</th><th>Drawdown สูงสุด</th><th>Sharpe</th><th>Calmar</th><th>เทรด/ปี</th><th>อัตราชนะ</th><th>เวลาที่ถือทอง</th></tr>` +
