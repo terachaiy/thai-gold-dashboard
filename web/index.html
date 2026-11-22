@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ทองคำไทย กลยุทธ์</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
+<style>
+:root{
+  --bg:#f6f4ef; --card:#ffffff; --ink:#1d1b16; --muted:#6b665c; --line:#e4dfd3;
+  --gold:#b8860b; --gold-soft:#f5ead0; --up:#1a7f37; --down:#cf222e; --flat:#8a6d1f;
+  --up-soft:#e3f4e8; --down-soft:#fbe5e6; --flat-soft:#f6eed9;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#14130f; --card:#1d1c17; --ink:#ece8dd; --muted:#a39d8f; --line:#302d25;
+  --gold:#e0b04a; --gold-soft:#2e2715; --up:#4ac26b; --down:#ff6b6b; --flat:#d8b45a;
+  --up-soft:#16301d; --down-soft:#3a1a1b; --flat-soft:#2e2715; } }
+:root[data-theme="dark"]{
+  --bg:#14130f; --card:#1d1c17; --ink:#ece8dd; --muted:#a39d8f; --line:#302d25;
+  --gold:#e0b04a; --gold-soft:#2e2715; --up:#4ac26b; --down:#ff6b6b; --flat:#d8b45a;
+  --up-soft:#16301d; --down-soft:#3a1a1b; --flat-soft:#2e2715; }
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 "IBM Plex Sans Thai",system-ui,sans-serif}
+.num{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.wrap{max-width:1180px;margin:0 auto;padding:20px 16px 48px}
+header{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:16px}
+h1{font-size:22px;margin:0;font-weight:700} h1 span{color:var(--gold)}
+h2{font-size:15px;margin:0 0 12px;font-weight:600;color:var(--muted);letter-spacing:.02em}
+.sub{color:var(--muted);font-size:13px}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(12,1fr)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;min-width:0}
+.c4{grid-column:span 4}.c5{grid-column:span 5}.c7{grid-column:span 7}.c8{grid-column:span 8}.c12{grid-column:span 12}.c6{grid-column:span 6}
+@media(max-width:900px){.c4,.c5,.c6,.c7,.c8{grid-column:span 12}}
+.price-row{display:flex;gap:18px;flex-wrap:wrap}
+.price-row div{flex:1;min-width:120px}
+.lbl{font-size:12px;color:var(--muted)}
+.big{font-size:30px;font-weight:600;line-height:1.15}
+.chg.up{color:var(--up)}.chg.down{color:var(--down)}
+.verdict{border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:14px}
+.verdict.BULLISH{background:var(--up-soft);color:var(--up)}
+.verdict.BEARISH{background:var(--down-soft);color:var(--down)}
+.verdict.NEUTRAL{background:var(--flat-soft);color:var(--flat)}
+.verdict .v{font-size:28px;font-weight:700}
+.meter{flex:1;height:8px;border-radius:4px;background:color-mix(in srgb,currentColor 18%,transparent);overflow:hidden}
+.meter i{display:block;height:100%;background:currentColor;border-radius:4px}
+ul.reasons{margin:12px 0 0;padding-left:18px} ul.reasons li{margin:3px 0}
+.pill{display:inline-block;padding:2px 10px;border-radius:999px;font-size:13px;font-weight:600}
+.pill.LONG{background:var(--up-soft);color:var(--up)} .pill.FLAT{background:var(--flat-soft);color:var(--flat)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:6px 8px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{font-weight:500;color:var(--muted);font-size:12px}
+tr.best td{background:var(--gold-soft)}
+.scroll{overflow-x:auto}
+.factor{display:grid;grid-template-columns:110px 1fr 46px;align-items:center;gap:10px;margin:7px 0;font-size:14px}
+.bar{position:relative;height:8px;background:var(--line);border-radius:4px}
+.bar i{position:absolute;top:0;height:100%;border-radius:4px}
+.bar::after{content:"";position:absolute;left:50%;top:-3px;bottom:-3px;width:1px;background:var(--muted)}
+.levels{display:flex;gap:16px} .levels>div{flex:1}
+.levels .row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed var(--line)}
+.news{list-style:none;margin:0;padding:0;max-height:520px;overflow:auto}
+.news li{display:grid;grid-template-columns:52px 1fr;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
+.news a{color:var(--ink);text-decoration:none} .news a:hover{text-decoration:underline}
+.sc{font-size:12px;font-weight:600;text-align:center;border-radius:6px;padding:2px 0;align-self:start}
+.sc.p{background:var(--up-soft);color:var(--up)}.sc.n{background:var(--down-soft);color:var(--down)}.sc.z{background:var(--line);color:var(--muted)}
+.meta{font-size:12px;color:var(--muted)}
+#chart,#eq{height:380px} #eq{height:300px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:8px}
+.legend b{display:inline-block;width:14px;height:3px;vertical-align:middle;margin-right:5px;border-radius:2px}
+.note{font-size:13px;color:var(--muted);background:var(--gold-soft);border-radius:10px;padding:10px 14px}
+.tabs{display:flex;gap:6px;margin-bottom:10px} .tabs button{font:inherit;font-size:13px;border:1px solid var(--line);background:transparent;color:var(--ink);padding:3px 12px;border-radius:999px;cursor:pointer}
+.tabs button.on{background:var(--ink);color:var(--card)}
+.err{color:var(--down)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1><span>●</span> ทองคำไทย · แดชบอร์ดกลยุทธ์ Swing</h1>
+    <div class="sub" id="stamp">กำลังโหลด…</div>
+  </header>
+
+  <div class="grid">
+    <section class="card c5">
+      <h2>ราคาทองคำแท่ง 96.5% (สมาคมค้าทองคำ)</h2>
+      <div class="price-row">
+        <div><div class="lbl">รับซื้อ</div><div class="big num" id="buy">–</div></div>
+        <div><div class="lbl">ขายออก</div><div class="big num" id="sell">–</div></div>
+      </div>
+      <div style="margin-top:8px" class="chg num" id="chg"></div>
+      <div class="meta" id="round"></div>
+    </section>
+
+    <section class="card c7">
+      <h2>มุมมองของที่ปรึกษา</h2>
+      <div class="verdict" id="verdict"><div class="v" id="view">–</div><div class="meter"><i id="conf"></i></div><div class="num" id="confTxt"></div></div>
+      <ul class="reasons" id="reasons"></ul>
+    </section>
+
+    <section class="card c4">
+      <h2>สัญญาณหลัก · Donchian <span class="sub" id="params"></span></h2>
+      <div><span class="pill" id="pos">–</span> <span class="sub" id="since"></span></div>
+      <table style="margin-top:12px">
+        <tr><td>จุดเข้าซื้อ (ปิดเหนือ)</td><td class="num" id="entry">–</td></tr>
+        <tr><td>จุดออก / ตัดขาดทุน (ปิดต่ำกว่า)</td><td class="num" id="exit">–</td></tr>
+        <tr><td>ความผันผวนต่อวัน (ATR)</td><td class="num" id="atr">–</td></tr>
+      </table>
+      <p class="meta" style="margin-bottom:0">กลยุทธ์นี้ผ่านการทดสอบ walk-forward ปี 2009–ปัจจุบัน ส่วนปัจจัยอื่นเป็นบริบทประกอบ</p>
+    </section>
+
+    <section class="card c4">
+      <h2>ปัจจัยประกอบ</h2>
+      <div id="factors"></div>
+      <div class="meta" style="margin-top:10px" id="decomp"></div>
+    </section>
+
+    <section class="card c4">
+      <h2>แนวรับ / แนวต้าน</h2>
+      <div class="levels">
+        <div><div class="lbl">แนวต้าน</div><div id="res"></div></div>
+        <div><div class="lbl">แนวรับ</div><div id="sup"></div></div>
+      </div>
+      <div class="meta" style="margin-top:10px" id="ind"></div>
+    </section>
+
+    <section class="card c12">
+      <h2>กราฟราคา (บาท/บาททองคำ) · สัญญาณซื้อ-ขายย้อนหลัง</h2>
+      <div id="chart"></div>
+      <div class="legend">
+        <span><b style="background:#d4a017"></b>EMA 50</span><span><b style="background:#7a5cff"></b>EMA 200</span>
+        <span><b style="background:#1a7f37"></b>กรอบเข้า (Donchian สูงสุด)</span><span><b style="background:#cf222e"></b>กรอบออก (Donchian ต่ำสุด)</span>
+      </div>
+    </section>
+
+    <section class="card c7">
+      <h2>ข่าวทองคำ · วิเคราะห์ด้วยคำสำคัญ <span class="sub" id="newsIdx"></span></h2>
+      <ul class="news" id="news"></ul>
+    </section>
+
+    <section class="card c5">
+      <h2>ปัจจัยขับเคลื่อนจากข่าว (48 ชม.)</h2>
+      <div id="drivers"></div>
+      <h2 style="margin-top:18px">ดัชนีข่าวรายวัน</h2>
+      <div id="daily" style="height:140px"></div>
+    </section>
+
+    <section class="card c12">
+      <h2>ผลทดสอบย้อนหลัง (walk-forward, หักต้นทุน 0.4% ต่อรอบ, ส่งคำสั่งช้า 1 วัน)</h2>
+      <div class="scroll"><table id="bt"></table></div>
+      <div style="margin-top:14px" class="tabs" id="eqTabs"></div>
+      <div id="eq"></div>
+      <div class="scroll" style="margin-top:14px"><table id="yearly"></table></div>
+    </section>
+
+    <section class="card c12 note">
+      ข้อมูลนี้เป็นการวิเคราะห์ทางเทคนิคและสถิติ ไม่ใช่คำแนะนำการลงทุนส่วนบุคคล · ผลในอดีตไม่รับประกันผลในอนาคต ·
+      ราคาย้อนหลังก่อนปัจจุบันคำนวณจาก XAU/USD × USD/THB และปรับเทียบกับราคาสมาคมค้าทองคำ · คะแนนข่าวมาจากคำสำคัญ จึงอาจตีความผิดได้
+    </section>
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const fmt = n => n == null ? "–" : Math.round(n).toLocaleString("th-TH");
+const pct = x => (x*100).toFixed(1) + "%";
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const DRV = {price:"ราคา/โมเมนตัม",trend:"มุมมองแนวโน้ม",fed:"ดอกเบี้ย/เฟด",usd:"ดอลลาร์",thb:"ค่าเงินบาท",
+  geopolitics:"ภูมิรัฐศาสตร์",flows:"แรงซื้อ/ขาย",macro:"เศรษฐกิจ",inflation:"เงินเฟ้อ"};
+const FAC = {donchian:"Donchian",trend:"แนวโน้มหลัก",momentum:"โมเมนตัม RSI",news:"ข่าว"};
+
+function chartOpts(h){return {height:h,layout:{background:{color:"transparent"},textColor:css("--muted"),fontFamily:"IBM Plex Sans Thai"},
+  grid:{vertLines:{color:css("--line")},horzLines:{color:css("--line")}},rightPriceScale:{borderColor:css("--line")},
+  timeScale:{borderColor:css("--line")},localization:{priceFormatter:p=>Math.round(p).toLocaleString("th-TH")}}}
+
+function bar(v){ // v in [-1,1]
+  const w = Math.abs(v)*50, left = v>=0?50:50-w, c = v>=0?css("--up"):css("--down");
+  return `<div class="bar"><i style="left:${left}%;width:${w}%;background:${c}"></i></div>`;
+}
+
+async function load(){
+  const a = await (await fetch("/api/summary")).json();
+  if(!a.price){ $("stamp").innerHTML = `<span class="err">โหลดข้อมูลไม่สำเร็จ: ${a.error||""}</span>`; return; }
+  const q = a.quote || {};
+  $("stamp").textContent = `อัปเดต ${new Date(a.generated).toLocaleString("th-TH")}`;
+  $("buy").textContent = fmt(q.bar_buy ?? a.price); $("sell").textContent = fmt(q.bar_sell ?? a.price);
+  const c = $("chg"); c.className = "chg num " + (a.change_1d>=0?"up":"down");
+  c.textContent = `${a.change_1d>=0?"▲":"▼"} ${fmt(Math.abs(a.change_1d))} บาท (${(a.change_1d_pct*100).toFixed(2)}%) เทียบวันทำการก่อน`;
+  $("round").textContent = q.time ? `ประกาศ ${new Date(q.time).toLocaleString("th-TH",{dateStyle:"medium",timeStyle:"short"})} · ครั้งที่ ${q.round}` : "";
+
+  $("verdict").className = "verdict " + a.view_en; $("view").textContent = a.view;
+  $("conf").style.width = a.confidence + "%"; $("confTxt").textContent = `ความมั่นใจ ${a.confidence}%`;
+  $("reasons").innerHTML = a.reasons.map(r=>`<li>${r}</li>`).join("");
+
+  const s = a.signal;
+  $("pos").className = "pill " + s.position; $("pos").textContent = s.position_th;
+  $("since").textContent = `ตั้งแต่ ${new Date(s.since).toLocaleDateString("th-TH",{dateStyle:"medium"})}`;
+  $("params").textContent = `(${s.params.entry}/${s.params.exit} วัน)`;
+  $("entry").textContent = fmt(s.entry_level); $("exit").textContent = fmt(s.exit_level); $("atr").textContent = "±" + fmt(s.atr);
+
+  $("factors").innerHTML = Object.entries(a.factors).map(([k,v]) =>
+    `<div class="factor"><span>${FAC[k]} <span class="meta">${Math.round(a.weights[k]*100)}%</span></span>${bar(v)}<span class="num" style="text-align:right">${v>=0?"+":""}${v.toFixed(2)}</span></div>`).join("");
+  const d = a.decomp_20d;
+  $("decomp").textContent = `20 วันล่าสุด: ทองโลก ${(d.world*100).toFixed(1)}% · ผลจากค่าบาท ${(d.baht*100).toFixed(1)}% (บาทอ่อน = ทองไทยแพงขึ้น)`;
+
+  const row = v => `<div class="row"><span class="num">${fmt(v)}</span><span class="meta">${((v/a.price-1)*100).toFixed(1)}%</span></div>`;
+  $("res").innerHTML = a.levels.resistance.map(row).join("") || "<div class='meta'>–</div>";
+  $("sup").innerHTML = a.levels.support.map(row).join("") || "<div class='meta'>–</div>";
+  const i = a.indicators;
+  $("ind").innerHTML = `RSI14 <b class="num">${i.rsi.toFixed(0)}</b> · ADX <b class="num">${i.adx.toFixed(0)}</b> · EMA50 <span class="num">${fmt(i.ema50)}</span> · EMA200 <span class="num">${fmt(i.ema200)}</span>`;
+
+  // price chart
+  const el = $("chart"); el.innerHTML = "";
+  const ch = LightweightCharts.createChart(el, chartOpts(380));
+  const cs = ch.addCandlestickSeries({upColor:css("--up"),downColor:css("--down"),borderVisible:false,wickUpColor:css("--up"),wickDownColor:css("--down")});
+  cs.setData(a.chart.candles); cs.setMarkers(a.chart.markers);
+  const ln = (data,color,style=0) => { const l = ch.addLineSeries({color,lineWidth:1.5,lineStyle:style,priceLineVisible:false,lastValueVisible:false}); l.setData(data); };
+  ln(a.chart.ema50,"#d4a017"); ln(a.chart.ema200,"#7a5cff"); ln(a.chart.upper,"#1a7f37",2); ln(a.chart.lower,"#cf222e",2);
+  ch.timeScale().fitContent();
+  new ResizeObserver(()=>ch.applyOptions({width:el.clientWidth})).observe(el);
+
+  // news drivers
+  const n = a.news;
+  $("newsIdx").textContent = `ดัชนี ${n.index>=0?"+":""}${n.index.toFixed(2)} · บวก ${n.bull} / ลบ ${n.bear}`;
+  $("drivers").innerHTML = Object.entries(n.drivers).map(([k,v]) =>
+    `<div class="factor"><span>${DRV[k]||k}</span>${bar(v)}<span class="num" style="text-align:right">${v>=0?"+":""}${v.toFixed(2)}</span></div>`).join("") || "<div class='meta'>ไม่มีข้อมูล</div>";
+}
+
+async function loadNews(){
+  const r = await (await fetch("/api/news")).json();
+  $("news").innerHTML = r.items.map(it => {
+    const k = it.score>0.1?"p":it.score<-0.1?"n":"z";
+    const t = new Date(it.time).toLocaleString("th-TH",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
+    return `<li><span class="sc ${k} num">${it.score>=0?"+":""}${it.score.toFixed(1)}</span><div><a href="${it.link}" target="_blank" rel="noopener">${it.title.replace(/</g,"&lt;")}</a>
+      <div class="meta">${t} · ${it.source}${it.drivers?" · "+it.drivers.split(",").map(d=>DRV[d]||d).join(", "):""}</div></div></li>`;
+  }).join("");
+  const el = $("daily"); el.innerHTML = "";
+  const ch = LightweightCharts.createChart(el, {...chartOpts(140), handleScroll:false, handleScale:false});
+  const h = ch.addHistogramSeries({priceLineVisible:false});
+  h.setData(r.daily.map(([d,s]) => ({time:d, value:s, color: s>=0?css("--up"):css("--down")})));
+  ch.timeScale().fitContent();
+  new ResizeObserver(()=>ch.applyOptions({width:el.clientWidth})).observe(el);
+}
+
+async function loadBacktest(){
+  const b = await (await fetch("/api/backtest")).json();
+  if(!b.results) return;
+  const R = b.results, keys = Object.keys(R);
+  $("bt").innerHTML = `<tr><th>กลยุทธ์</th><th>ผลตอบแทน/ปี</th><th>Drawdown สูงสุด</th><th>Sharpe</th><th>Calmar</th><th>เทรด/ปี</th><th>อัตราชนะ</th><th>เวลาที่ถือทอง</th></tr>` +
+    keys.map(k => { const s = R[k].stats; return `<tr class="${k==="donchian"?"best":""}"><td>${R[k].name_th}${k==="donchian"?" ★":""}</td>
+      <td class="num">${pct(s.cagr)}</td><td class="num">${pct(s.max_dd)}</td><td class="num">${s.sharpe.toFixed(2)}</td><td class="num">${s.calmar.toFixed(2)}</td>
+      <td class="num">${k==="buy_hold"?"–":s.trades_per_year.toFixed(1)}</td><td class="num">${k==="buy_hold"?"–":pct(s.win_rate)}</td><td class="num">${pct(s.exposure)}</td></tr>`; }).join("");
+
+  const years = Object.keys(R.buy_hold.yearly);
+  const cell = v => v==null?"<td>–</td>":`<td class="num" style="color:${v>=0?css("--up"):css("--down")}">${pct(v)}</td>`;
+  $("yearly").innerHTML = `<tr><th>ปี</th>${keys.map(k=>`<th>${R[k].name_th}</th>`).join("")}</tr>` +
+    years.map(y => `<tr><td>${+y+543}</td>${keys.map(k=>cell(R[k].yearly[y])).join("")}</tr>`).join("");
+
+  const el = $("eq"); el.innerHTML = "";
+  const ch = LightweightCharts.createChart(el, {...chartOpts(300), localization:{priceFormatter:p=>p.toFixed(2)+"×"}});
+  const colors = {buy_hold:"#8a8a8a",donchian:"#b8860b",ema_cross:"#7a5cff",rsi_pullback:"#cf222e",regime:"#1a7f37"};
+  const series = {};
+  keys.forEach(k => { series[k] = ch.addLineSeries({color:colors[k],lineWidth:k==="donchian"?2.5:1.5,priceLineVisible:false,title:R[k].name_th});
+    series[k].setData(R[k].equity.map(([t,v])=>({time:t,value:v}))); });
+  ch.timeScale().fitContent();
+  new ResizeObserver(()=>ch.applyOptions({width:el.clientWidth})).observe(el);
+  $("eqTabs").innerHTML = `<button class="on" data-k="all">ทั้งหมด</button><button data-k="focus">Donchian เทียบ ซื้อแล้วถือ</button>`;
+  $("eqTabs").onclick = e => { const k = e.target.dataset.k; if(!k) return;
+    [...$("eqTabs").children].forEach(b=>b.classList.toggle("on", b===e.target));
+    keys.forEach(s => series[s].applyOptions({visible: k==="all" || s==="donchian" || s==="buy_hold"})); };
+}
+
+load().catch(e=>$("stamp").textContent="ผิดพลาด: "+e); loadNews(); loadBacktest();
+setInterval(load, 5*60*1000);
+</script>
+</body>
+</html>
