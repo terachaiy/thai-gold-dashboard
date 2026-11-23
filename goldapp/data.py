@@ -35,11 +35,14 @@ def fetch_gta() -> dict | None:
         html = requests.get("https://www.goldtraders.or.th/", headers=UA, timeout=20).text
     except requests.RequestException:
         return None
-    nums = re.findall(r'font-bold ">([\d,]+\.\d{2})</span>', html)
+    # The first "รับซื้อ" (buy) and "ขายออก" (sell) values are the bar price; ornament gold follows.
+    # Matched by label, not CSS class: the site's classes changed in Nov 2026.
+    buy_m = re.search(r"รับซื้อ</span>\s*<span[^>]*>([\d,]+\.\d{2})", html)
+    sell_m = re.search(r"ขายออก</span>\s*<span[^>]*>([\d,]+\.\d{2})", html)
     stamp = re.search(r"ประจำวันที่ (\d+)/(\d+)/(\d{4}) เวลา (\d+):(\d+) \(ครั้งที่ (\d+)\)", html)
-    if len(nums) < 2:
+    if not (buy_m and sell_m):
         return None
-    buy, sell = (float(n.replace(",", "")) for n in nums[:2])
+    buy, sell = (float(m.group(1).replace(",", "")) for m in (buy_m, sell_m))
     q = {"bar_buy": buy, "bar_sell": sell, "round": None, "time": None}
     if stamp:
         d, m, y, hh, mm, rnd = map(int, stamp.groups())
